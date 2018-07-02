@@ -1,0 +1,36 @@
+from tkinter import *
+import time
+
+def exit_full_screen(event):
+    root.overrideredirect(False)
+
+
+root = Tk()
+
+root.bind("<Escape>", exit_full_screen)
+root.configure(background="black")
+w, h = root.winfo_screenwidth(), root.winfo_screenheight()
+root.geometry("%dx%d+0+0" % (w, h))
+
+root.overrideredirect(True)
+
+clock = Label(root, font=("Helvetica", 80), fg="white", bg="Black")
+clock.place(relx=0.85, rely=0.1, anchor=CENTER)
+
+
+def tick():
+# get the current local time from the PC
+    time2 = time.strftime('%H:%M:%S')
+# if time string has changed, update it
+    clock.config(text=time2)
+# calls itself every 200 milliseconds
+# to update the time display as needed
+# could use >200 ms, but display gets jerky
+    clock.after(200, tick)
+
+tick()
+
+root.mainloop()
+
+
+
