@@ -1,5 +1,27 @@
 from tkinter import *
 import time
+import requests
+
+class NewsAPI:
+    url = ('https://newsapi.org/v2/top-headlines?'
+           'country=us&'
+           'apiKey=694b9bb634cc49df9a294a7b16cc74a7')
+
+    response = requests.get(url)
+
+    my_json = response.json()
+
+    curr_article = 0
+
+    def article_titles(self):
+        title_list = []
+
+        for i in range(5):
+            title_list.append(self.my_json['articles'][i]['title'])
+
+        return title_list
+
+
 
 def exit_full_screen(event):
     root.overrideredirect(False)
@@ -29,6 +51,23 @@ def tick():
     clock.after(200, tick)
 
 tick()
+
+news = Label(root,font=("Helvetica", 20), text="NewsAPI", fg="white", bg="Black")
+news.place(relx=0.5, rely=0.8, anchor=CENTER)
+
+news_API = NewsAPI()
+
+def news_update():
+
+    headlines = news_API.article_titles()
+
+    news.config(text=headlines[news_API.curr_article])
+
+    news_API.curr_article += 1
+    print(news_API.curr_article)
+    news.after(20000, news_update)
+
+news_update()
 
 root.mainloop()
 
