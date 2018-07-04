@@ -1,8 +1,11 @@
 from tkinter import *
 import time
 import requests
+from datetime import datetime
+
 
 class NewsAPI:
+
     url = ('https://newsapi.org/v2/top-headlines?'
            'country=us&'
            'apiKey=694b9bb634cc49df9a294a7b16cc74a7')
@@ -21,6 +24,13 @@ class NewsAPI:
 
         return title_list
 
+    def article_descriptions(self):
+        description_list = []
+
+        for i in range(5):
+            description_list.append(self.my_json['articles'][i]['description'])
+
+        return description_list
 
 
 def exit_full_screen(event):
@@ -41,35 +51,44 @@ clock.place(relx=0.85, rely=0.1, anchor=CENTER)
 
 
 def tick():
-# get the current local time from the PC
-    time2 = time.strftime('%H:%M:%S')
-# if time string has changed, update it
+
+    #time2 = time.strftime('%H:%M:%S')
+    time2 = time.strftime("%#I:%M:%S %p")
     clock.config(text=time2)
-# calls itself every 200 milliseconds
-# to update the time display as needed
-# could use >200 ms, but display gets jerky
+
     clock.after(200, tick)
+
 
 tick()
 
-news = Label(root,font=("Helvetica", 20), text="NewsAPI", fg="white", bg="Black")
-news.place(relx=0.5, rely=0.8, anchor=CENTER)
+news_title = Label(root, font=("Helvetica", 20), text="NewsAPI", fg="white", bg="Black")
+news_title.place(relx=0.5, rely=0.76, anchor=CENTER)
+
+news_description = Label(root, font=("Helvetica", 20), text="NewsDescription", wraplength=1500, fg="white", bg="Black")
+news_description.place(relx=0.5, rely=0.85, anchor=CENTER)
 
 news_API = NewsAPI()
+
 
 def news_update():
 
     headlines = news_API.article_titles()
+    descriptions = news_API.article_descriptions()
 
-    news.config(text=headlines[news_API.curr_article])
+    news_title.config(text=headlines[news_API.curr_article])
+    news_description.config(text=descriptions[news_API.curr_article])
 
-    news_API.curr_article += 1
-    print(news_API.curr_article)
-    news.after(20000, news_update)
+    if news_API.curr_article == len(headlines)-1:
+
+        news_API.curr_article = 1
+
+    else:
+
+        news_API.curr_article += 1
+
+    news_title.after(10000, news_update)
+
 
 news_update()
 
 root.mainloop()
-
-
-
